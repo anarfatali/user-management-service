@@ -1,7 +1,6 @@
 package az.company.usermanagementservice.service;
 
 import az.company.usermanagementservice.domain.dto.request.CreateUserRequest;
-import az.company.usermanagementservice.domain.dto.request.DeleteUserRequest;
 import az.company.usermanagementservice.domain.dto.request.UpdateUserRequest;
 import az.company.usermanagementservice.domain.dto.response.UserResponse;
 import org.springframework.data.domain.Page;
@@ -17,5 +16,5 @@ public interface UserService {
 
     void updateUser(UpdateUserRequest request);
 
-    void deleteUser(DeleteUserRequest request);
+    void deleteUser(Long id);
 }

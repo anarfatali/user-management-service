@@ -1,9 +1,9 @@
 package az.company.usermanagementservice.service.impl;
 
 import az.company.usermanagementservice.domain.dto.request.CreateUserRequest;
-import az.company.usermanagementservice.domain.dto.request.DeleteUserRequest;
 import az.company.usermanagementservice.domain.dto.request.UpdateUserRequest;
 import az.company.usermanagementservice.domain.dto.response.UserResponse;
+import az.company.usermanagementservice.domain.entity.UserEntity;
 import az.company.usermanagementservice.exception.NotFoundException;
 import az.company.usermanagementservice.mapper.UserMapper;
 import az.company.usermanagementservice.repository.UserRepository;
@@ -24,24 +24,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    @Override
-    public Page<UserResponse> getAllUsers(Pageable pageable) {
-        log.info("ActionLog.getAllUsers.start");
-        var users = userRepository.findAll(pageable);
-        log.info("ActionLog.getAllUsers.end - totalUsers: {}", users.getTotalElements());
-        return users.map(userMapper::toResponse);
-    }
-
-    @Override
-    public void updateUser(UpdateUserRequest request) {
-
-    }
-
-    @Override
-    public void deleteUser(DeleteUserRequest request) {
-
-    }
-
     @Transactional
     @Override
     public void createUser(CreateUserRequest request) {
@@ -52,16 +34,42 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
+        log.info("ActionLog.getAllUsers.start");
+        var users = userRepository.findAll(pageable);
+        log.info("ActionLog.getAllUsers.end - totalUsers: {}", users.getTotalElements());
+        return users.map(userMapper::toResponse);
+    }
+
+    @Override
     public UserResponse getUserById(Long id) {
         log.info("ActionLog.getUserById.start - userId={}", id);
-        var user = userRepository.findById(id)
+        var user = findUserById(id);
+        log.info("ActionLog.getUserById.end - user={}", user);
+        return userMapper.toResponse(user);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        log.info("ActionLog.deleteUser.start - userId: {}", id);
+        var user = findUserById(id);
+        userRepository.delete(user);
+        log.info("ActionLog.getUserById.end - userId: {}", id);
+    }
+
+    @Override
+    public void updateUser(UpdateUserRequest request) {
+
+    }
+
+
+    private UserEntity findUserById(Long id) {
+        return userRepository.findById(id)
                 .orElseThrow(() ->
                         {
-                            log.error("ActionLog.getUserById.error - userId={}", id);
+                            log.error("ActionLog.findUserById.error - userId={}", id);
                             return new NotFoundException("User not found with id: " + id);
                         }
                 );
-        log.info("ActionLog.getUserById.end - user={}", user);
-        return userMapper.toResponse(user);
     }
 }
