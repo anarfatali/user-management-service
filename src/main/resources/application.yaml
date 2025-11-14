@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: user-management-service
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+      properties:
+        hibernate:
+          format_sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/user-management-service
+    username: postgres
+    password: 1234
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
