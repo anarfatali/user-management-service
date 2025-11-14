@@ -9,10 +9,10 @@ import az.company.usermanagementservice.repository.UserRepository;
 import az.company.usermanagementservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -24,8 +24,11 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public List<UserResponse> getAllUsers() {
-        return null;
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
+        log.info("ActionLog.getAllUsers.start");
+        var users = userRepository.findAll(pageable);
+        log.info("ActionLog.getAllUsers.end - totalUsers: {}", users.getTotalElements());
+        return users.map(userMapper::toResponse);
     }
 
     @Override

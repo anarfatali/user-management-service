@@ -4,8 +4,8 @@ import az.company.usermanagementservice.domain.dto.request.CreateUserRequest;
 import az.company.usermanagementservice.domain.dto.request.DeleteUserRequest;
 import az.company.usermanagementservice.domain.dto.request.UpdateUserRequest;
 import az.company.usermanagementservice.domain.dto.response.UserResponse;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
@@ -13,7 +13,7 @@ public interface UserService {
 
     UserResponse getUserById(Long id);
 
-    List<UserResponse> getAllUsers();
+    Page<UserResponse> getAllUsers(Pageable pageable);
 
     void updateUser(UpdateUserRequest request);
 
