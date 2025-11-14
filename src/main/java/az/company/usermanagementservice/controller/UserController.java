@@ -1,6 +1,7 @@
 package az.company.usermanagementservice.controller;
 
 import az.company.usermanagementservice.domain.dto.request.CreateUserRequest;
+import az.company.usermanagementservice.domain.dto.request.UpdateUserRequest;
 import az.company.usermanagementservice.domain.dto.response.UserResponse;
 import az.company.usermanagementservice.service.UserService;
 import jakarta.validation.Valid;
@@ -42,5 +43,11 @@ public class UserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserById(@PathVariable Long id) {
         userService.deleteUser(id);
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserRequest request) {
+        userService.updateUser(id, request);
     }
 }

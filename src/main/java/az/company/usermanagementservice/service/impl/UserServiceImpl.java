@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(user);
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long id) {
         log.info("ActionLog.deleteUser.start - userId: {}", id);
@@ -57,11 +58,19 @@ public class UserServiceImpl implements UserService {
         log.info("ActionLog.getUserById.end - userId: {}", id);
     }
 
+    @Transactional
     @Override
-    public void updateUser(UpdateUserRequest request) {
+    public void updateUser(Long id, UpdateUserRequest request) {
+        log.info("ActionLog.updateUser.start - request={}", request);
+        var user = findUserById(id);
 
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+
+        userRepository.save(user);
+        log.info("ActionLog.updateUser.end - userId={}", id);
     }
-
 
     private UserEntity findUserById(Long id) {
         return userRepository.findById(id)
