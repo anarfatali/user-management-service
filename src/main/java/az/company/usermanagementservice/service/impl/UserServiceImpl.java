@@ -4,6 +4,7 @@ import az.company.usermanagementservice.domain.dto.request.CreateUserRequest;
 import az.company.usermanagementservice.domain.dto.request.DeleteUserRequest;
 import az.company.usermanagementservice.domain.dto.request.UpdateUserRequest;
 import az.company.usermanagementservice.domain.dto.response.UserResponse;
+import az.company.usermanagementservice.exception.NotFoundException;
 import az.company.usermanagementservice.mapper.UserMapper;
 import az.company.usermanagementservice.repository.UserRepository;
 import az.company.usermanagementservice.service.UserService;
@@ -52,6 +53,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserById(Long id) {
-        return null;
+        log.info("ActionLog.getUserById.start - userId={}", id);
+        var user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        {
+                            log.error("ActionLog.getUserById.error - userId={}", id);
+                            return new NotFoundException("User not found with id: " + id);
+                        }
+                );
+        log.info("ActionLog.getUserById.end - user={}", user);
+        return userMapper.toResponse(user);
     }
 }

@@ -24,6 +24,7 @@ public class UserMapper {
                 .email(entity.getEmail())
                 .phone(entity.getPhone())
                 .role(Role.USER)
+                .createdAt(entity.getCreatedAt())
                 .build();
     }
 }
