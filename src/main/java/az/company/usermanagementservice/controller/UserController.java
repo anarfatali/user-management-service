@@ -4,8 +4,10 @@ import az.company.usermanagementservice.domain.dto.request.CreateUserRequest;
 import az.company.usermanagementservice.domain.dto.request.UpdateUserRequest;
 import az.company.usermanagementservice.domain.dto.response.UserResponse;
 import az.company.usermanagementservice.service.UserService;
+import az.company.usermanagementservice.specification.UserFilter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,8 +34,9 @@ public class UserController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Page<UserResponse>> getAllUsers(
+            @ParameterObject UserFilter filter,
             @PageableDefault(sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(userService.getAllUsers(pageable));
+        return ResponseEntity.ok(userService.getAllUsers(filter, pageable));
     }
 
     @GetMapping("/{id}")

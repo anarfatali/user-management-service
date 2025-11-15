@@ -8,45 +8,47 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: bigSerial
+                  type: BIGSERIAL
                   constraints:
                     primaryKey: true
                     nullable: false
+
               - column:
                   name: name
-                  type: varchar(255)
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
+
               - column:
                   name: phone
-                  type: varchar(255)
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
                     unique: true
+
               - column:
                   name: email
-                  type: varchar(255)
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
                     unique: true
+
               - column:
                   name: role
-                  type: varchar(255)
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
+
               - column:
                   name: created_at
-                  type: timestamp
+                  type: TIMESTAMP
+                  defaultValueComputed: "NOW()"
                   constraints:
                     nullable: false
-                  defaultValueComputed: "NOW()"
+
               - column:
                   name: updated_at
-                  type: timestamp
+                  type: TIMESTAMP
+                  defaultValueComputed: "NOW()"
                   constraints:
                     nullable: true
-                  defaultValueComputed: "NOW()"
-
-
-
-

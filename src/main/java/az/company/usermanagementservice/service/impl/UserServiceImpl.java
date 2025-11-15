@@ -9,6 +9,8 @@ import az.company.usermanagementservice.exception.NotFoundException;
 import az.company.usermanagementservice.mapper.UserMapper;
 import az.company.usermanagementservice.repository.UserRepository;
 import az.company.usermanagementservice.service.UserService;
+import az.company.usermanagementservice.specification.UserFilter;
+import az.company.usermanagementservice.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,10 +46,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserResponse> getAllUsers(Pageable pageable) {
-        //TODO: specification
+    public Page<UserResponse> getAllUsers(UserFilter filter, Pageable pageable) {
         log.info("ActionLog.getAllUsers.start");
-        var users = userRepository.findAll(pageable);
+        var spec = UserSpecification.filter(filter);
+        var users = userRepository.findAll(spec, pageable);
         log.info("ActionLog.getAllUsers.end - totalUsers: {}", users.getTotalElements());
         return users.map(userMapper::toResponse);
     }
