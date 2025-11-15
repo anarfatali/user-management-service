@@ -8,6 +8,8 @@ spring:
       properties:
         hibernate:
           format_sql: true
+  liquibase:
+    change-log: classpath:db/changelog-master.yaml
   datasource:
     url: jdbc:postgresql://localhost:5432/user-management-service
     username: postgres

@@ -4,6 +4,7 @@ import az.company.usermanagementservice.domain.dto.request.CreateUserRequest;
 import az.company.usermanagementservice.domain.dto.request.UpdateUserRequest;
 import az.company.usermanagementservice.domain.dto.response.UserResponse;
 import az.company.usermanagementservice.domain.entity.UserEntity;
+import az.company.usermanagementservice.exception.AlreadyExistsException;
 import az.company.usermanagementservice.exception.NotFoundException;
 import az.company.usermanagementservice.mapper.UserMapper;
 import az.company.usermanagementservice.repository.UserRepository;
@@ -29,12 +30,22 @@ public class UserServiceImpl implements UserService {
     public void createUser(CreateUserRequest request) {
         log.info("ActionLog.createUser.start - request={} ", request);
         var user = userMapper.toEntity(request);
+
+        if (userRepository.existsByPhone(request.getPhone())) {
+            throw new AlreadyExistsException("Phone already exists");
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AlreadyExistsException("Email already exists");
+        }
+
         userRepository.save(user);
         log.info("ActionLog.createUser.end - userId={}", user.getId());
     }
 
     @Override
     public Page<UserResponse> getAllUsers(Pageable pageable) {
+        //TODO: specification
         log.info("ActionLog.getAllUsers.start");
         var users = userRepository.findAll(pageable);
         log.info("ActionLog.getAllUsers.end - totalUsers: {}", users.getTotalElements());
@@ -53,9 +64,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         log.info("ActionLog.deleteUser.start - userId: {}", id);
-        var user = findUserById(id);
-        userRepository.delete(user);
-        log.info("ActionLog.getUserById.end - userId: {}", id);
+        checkIfUserExists(id);
+        userRepository.deleteById(id);
+        log.info("ActionLog.deleteUser.end - userId: {}", id);
     }
 
     @Transactional
@@ -64,9 +75,7 @@ public class UserServiceImpl implements UserService {
         log.info("ActionLog.updateUser.start - request={}", request);
         var user = findUserById(id);
 
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPhone(request.getPhone());
+        userMapper.update(user, request);
 
         userRepository.save(user);
         log.info("ActionLog.updateUser.end - userId={}", id);
@@ -80,5 +89,11 @@ public class UserServiceImpl implements UserService {
                             return new NotFoundException("User not found with id: " + id);
                         }
                 );
+    }
+
+    private void checkIfUserExists(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new NotFoundException("User not found with id: " + id);
+        }
     }
 }

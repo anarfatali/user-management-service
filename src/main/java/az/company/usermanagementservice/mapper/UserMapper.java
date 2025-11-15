@@ -2,6 +2,7 @@ package az.company.usermanagementservice.mapper;
 
 import az.company.usermanagementservice.common.enums.Role;
 import az.company.usermanagementservice.domain.dto.request.CreateUserRequest;
+import az.company.usermanagementservice.domain.dto.request.UpdateUserRequest;
 import az.company.usermanagementservice.domain.dto.response.UserResponse;
 import az.company.usermanagementservice.domain.entity.UserEntity;
 import org.springframework.stereotype.Component;
@@ -26,5 +27,11 @@ public class UserMapper {
                 .role(Role.USER)
                 .createdAt(entity.getCreatedAt())
                 .build();
+    }
+
+    public void update(UserEntity user, UpdateUserRequest request) {
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
     }
 }

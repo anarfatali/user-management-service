@@ -26,20 +26,21 @@ public class UserEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String phone;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 }

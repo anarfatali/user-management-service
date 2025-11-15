@@ -10,20 +10,33 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.Instant;
+
 @RestControllerAdvice
 public class GlobalErrorHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException e) {
         var errorResponse = new ErrorResponse();
+        errorResponse.setTimestamp(Instant.now());
         errorResponse.setMessage(e.getMessage());
         errorResponse.setCode("NOT_FOUND");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleAlreadyExistsException(AlreadyExistsException e) {
+        var errorResponse = new ErrorResponse();
+        errorResponse.setTimestamp(Instant.now());
+        errorResponse.setMessage(e.getMessage());
+        errorResponse.setCode("ALREADY_EXISTS");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
         var errorResponse = new ErrorResponse();
+        errorResponse.setTimestamp(Instant.now());
         errorResponse.setMessage(e.getMessage());
         errorResponse.setCode("BAD_REQUEST");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
@@ -32,6 +45,7 @@ public class GlobalErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         var errorResponse = new ErrorResponse();
+        errorResponse.setTimestamp(Instant.now());
         errorResponse.setMessage("Validation Failed: " + e.getBindingResult().getFieldError().getDefaultMessage());
         errorResponse.setCode("VALIDATION_ERROR");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
@@ -40,6 +54,7 @@ public class GlobalErrorHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         var errorResponse = new ErrorResponse();
+        errorResponse.setTimestamp(Instant.now());
         errorResponse.setMessage("HTTP Method Not Allowed: " + e.getMethod());
         errorResponse.setCode("HTTP_METHOD_NOT_ALLOWED");
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorResponse);
@@ -48,6 +63,7 @@ public class GlobalErrorHandler {
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {
         var errorResponse = new ErrorResponse();
+        errorResponse.setTimestamp(Instant.now());
         errorResponse.setMessage("HTTP Media Type Not Supported: " + e.getContentType());
         errorResponse.setCode("HTTP MEDIA_TYPE_NOT_SUPPORTED");
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
@@ -56,6 +72,7 @@ public class GlobalErrorHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         var errorResponse = new ErrorResponse();
+        errorResponse.setTimestamp(Instant.now());
         errorResponse.setMessage("Message not readable: " + e.getMessage());
         errorResponse.setCode("MESSAGE_NOT_READABLE");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
