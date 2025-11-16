@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.save(user);
-        log.info("ActionLog.createUser.end - userId={}", user.getId());
+        log.info("ActionLog.createUser.end");
 
         var event = UserCreatedEvent.builder()
                 .id(user.getId())
