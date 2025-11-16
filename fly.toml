@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for user-management-service-2v9qha on 2025-11-16T16:40:37Z
+# fly.toml app configuration file generated for user-management-service-ydhafq on 2025-11-16T17:00:05Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'user-management-service-2v9qha'
+app = 'user-management-service-ydhafq'
 primary_region = 'iad'
 
 [build]
