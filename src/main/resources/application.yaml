@@ -1,21 +1,56 @@
 spring:
   application:
     name: user-management-service
+
+  # CRITICAL: Disable Docker Compose auto-management
+  docker:
+    compose:
+      enabled: false
+
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: create-drop
-      properties:
-        hibernate:
-          format_sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
   liquibase:
     change-log: classpath:db/changelog-master.yaml
+
+  # Use environment variables for Docker compatibility
   datasource:
-    url: jdbc:postgresql://localhost:5432/user-management-service
-    username: postgres
-    password: 1234
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/user-management-service}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:1234}
+
+  kafka:
+    # Use environment variables
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:user-consumer-group}
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+    topics:
+      user-created: ${KAFKA_TOPIC_USER_CREATED:user.created}
+      user-updated: ${KAFKA_TOPIC_USER_UPDATED:user.updated}
+      user-deleted: ${KAFKA_TOPIC_USER_DELETED:user.deleted}
+
 logging:
   level:
-    org:
-      springframework:
-        web: DEBUG
+    root: ${LOG_LEVEL:INFO}
+    az.company.usermanagementservice: ${LOG_LEVEL:DEBUG}
+    org.springframework.web: DEBUG
+    org.apache.kafka: ${KAFKA_LOG_LEVEL:WARN}
+    org.springframework.kafka: ${KAFKA_LOG_LEVEL:WARN}

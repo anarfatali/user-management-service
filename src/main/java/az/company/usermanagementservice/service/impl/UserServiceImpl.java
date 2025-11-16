@@ -6,6 +6,10 @@ import az.company.usermanagementservice.domain.dto.response.UserResponse;
 import az.company.usermanagementservice.domain.entity.UserEntity;
 import az.company.usermanagementservice.exception.AlreadyExistsException;
 import az.company.usermanagementservice.exception.NotFoundException;
+import az.company.usermanagementservice.kafka.event.UserCreatedEvent;
+import az.company.usermanagementservice.kafka.event.UserDeletedEvent;
+import az.company.usermanagementservice.kafka.event.UserUpdatedEvent;
+import az.company.usermanagementservice.kafka.producer.UserProducer;
 import az.company.usermanagementservice.mapper.UserMapper;
 import az.company.usermanagementservice.repository.UserRepository;
 import az.company.usermanagementservice.service.UserService;
@@ -18,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserProducer userProducer;
     private final UserMapper userMapper;
 
     @Transactional
@@ -43,6 +50,17 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         log.info("ActionLog.createUser.end - userId={}", user.getId());
+
+        var event = UserCreatedEvent.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .role(user.getRole().name())
+                .createdAt(user.getCreatedAt())
+                .build();
+
+        userProducer.sendUserCreated(event);
     }
 
     @Override
@@ -66,9 +84,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         log.info("ActionLog.deleteUser.start - userId: {}", id);
-        checkIfUserExists(id);
+        var user = findUserById(id);
         userRepository.deleteById(id);
         log.info("ActionLog.deleteUser.end - userId: {}", id);
+
+        var event = UserDeletedEvent.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .role(user.getRole().name())
+                .deletedAt(LocalDateTime.now())
+                .build();
+
+        userProducer.sendUserDeleted(event);
     }
 
     @Transactional
@@ -81,6 +110,16 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         log.info("ActionLog.updateUser.end - userId={}", id);
+
+        var event = UserUpdatedEvent.builder()
+                .id(user.getId())
+                .newName(user.getName())
+                .newEmail(user.getEmail())
+                .newPhone(user.getPhone())
+                .updatedAt(user.getUpdatedAt() != null ? user.getUpdatedAt() : LocalDateTime.now())
+                .build();
+
+        userProducer.sendUserUpdated(event);
     }
 
     private UserEntity findUserById(Long id) {
@@ -91,11 +130,5 @@ public class UserServiceImpl implements UserService {
                             return new NotFoundException("User not found with id: " + id);
                         }
                 );
-    }
-
-    private void checkIfUserExists(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new NotFoundException("User not found with id: " + id);
-        }
     }
 }
