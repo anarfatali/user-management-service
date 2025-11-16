@@ -2,7 +2,10 @@ spring:
   application:
     name: user-management-service
 
-  # CRITICAL: Disable Docker Compose auto-management
+  server:
+    address: 0.0.0.0
+    port: 8080
+
   docker:
     compose:
       enabled: false
@@ -18,14 +21,12 @@ spring:
   liquibase:
     change-log: classpath:db/changelog-master.yaml
 
-  # Use environment variables for Docker compatibility
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/user-management-service}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:1234}
 
   kafka:
-    # Use environment variables
     bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
 
     producer:
