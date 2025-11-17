@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -35,9 +36,14 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Page<UserResponse>> getAllUsers(
             @ParameterObject UserFilter filter,
-            @PageableDefault(sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
         return ResponseEntity.ok(userService.getAllUsers(filter, pageable));
     }
+
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)

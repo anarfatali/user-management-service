@@ -46,7 +46,8 @@ class UserControllerTest {
         Page<UserResponse> page = new PageImpl<>(List.of(new UserResponse()));
         when(userService.getAllUsers(any(UserFilter.class), any(Pageable.class))).thenReturn(page);
 
-        ResponseEntity<Page<UserResponse>> response = userController.getAllUsers(new UserFilter(), Pageable.unpaged());
+        ResponseEntity<Page<UserResponse>> response =
+                userController.getAllUsers(new UserFilter(), page.getNumber(), page.getSize());
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(page, response.getBody());
     }
