@@ -1,5 +1,6 @@
 package az.company.usermanagementservice.mapper;
 
+import az.company.usermanagementservice.common.enums.Role;
 import az.company.usermanagementservice.domain.dto.request.CreateUserRequest;
 import az.company.usermanagementservice.domain.dto.request.UpdateUserRequest;
 import az.company.usermanagementservice.domain.dto.response.UserResponse;
@@ -14,6 +15,7 @@ public class UserMapper {
                 .name(request.getName())
                 .email(request.getEmail())
                 .phone(request.getPhone())
+                .role(Role.USER)
                 .build();
     }
 
@@ -22,6 +24,7 @@ public class UserMapper {
                 .name(entity.getName())
                 .email(entity.getEmail())
                 .phone(entity.getPhone())
+                .role(entity.getRole())
                 .createdAt(entity.getCreatedAt())
                 .build();
     }
