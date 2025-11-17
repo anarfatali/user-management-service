@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
         ),
         servers = {
                 @Server(url = "http://localhost:8080", description = "Development Server"),
-//                @Server(url = "https://", description = "Production Server")
+                @Server(url = "/", description = "Production Server")
         }
 )
 public class OpenApiConfig {

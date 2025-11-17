@@ -136,7 +136,8 @@ The service produces events for each user operation:
 ## Deployed Base URL
 
 ```text
-http://localhost:8080
+https://anarfatali.alakx.com/swagger-ui/index.html or
+use https://anarfatali.alakx.com/api/v1/users for http requests
 ```
 
 ---
