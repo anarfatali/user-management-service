@@ -85,6 +85,18 @@ services:
       timeout: 10s
       retries: 5
 
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    container_name: kafdrop
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: kafka:29092
+    depends_on:
+      - kafka
+    networks:
+      - app-network
+
 volumes:
   postgres_data:
 
